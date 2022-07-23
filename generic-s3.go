@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"time"
@@ -148,7 +149,7 @@ func (gs *S3Storage) Load(ctx context.Context, key string) ([]byte, error) {
 	log.Printf("Better S3: Inside of Load, Buffer %s\n", string(buf))
 	if err != nil {
 		log.Printf("Inside of load: %s", err.Error())
-		return nil, err
+		return nil, fs.ErrNotExist
 	}
 	log.Println(len(buf))
 	if len(buf) == 0 {
