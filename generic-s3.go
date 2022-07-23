@@ -143,8 +143,10 @@ func (gs *S3Storage) Load(ctx context.Context, key string) ([]byte, error) {
 		log.Println(err.Error())
 		return nil, err
 	}
+	log.Printf("Better S3: Inside of Load 1, Error: %s", err.Error())
 	defer r.Close()
 	buf, err := ioutil.ReadAll(gs.iowrap.WrapReader(r))
+	log.Printf("Better S3: Inside of Load 2, Error: %s, Buffer %s", err.Error(), string(buf))
 	if err != nil {
 		return nil, err
 	}
