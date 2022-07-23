@@ -117,13 +117,13 @@ func (gs *S3Storage) putLockFile(key string) error {
 	return err
 }
 
-func (gs *S3Storage) Unlock(key string) error {
-	return gs.s3client.RemoveObject(context.Background(), gs.bucket, gs.objLockName(key), minio.RemoveObjectOptions{})
+func (gs *S3Storage) Unlock(ctx context.Context, key string) error {
+	return gs.s3client.RemoveObject(ctx, gs.bucket, gs.objLockName(key), minio.RemoveObjectOptions{})
 }
 
-func (gs *S3Storage) Store(key string, value []byte) error {
+func (gs *S3Storage) Store(ctx context.Context, key string, value []byte) error {
 	r := gs.iowrap.ByteReader(value)
-	_, err := gs.s3client.PutObject(context.Background(),
+	_, err := gs.s3client.PutObject(ctx,
 		gs.bucket,
 		gs.objName(key),
 		r,
@@ -133,8 +133,8 @@ func (gs *S3Storage) Store(key string, value []byte) error {
 	return err
 }
 
-func (gs *S3Storage) Load(key string) ([]byte, error) {
-	r, err := gs.s3client.GetObject(context.Background(), gs.bucket, gs.objName(key), minio.GetObjectOptions{})
+func (gs *S3Storage) Load(ctx context.Context, key string) ([]byte, error) {
+	r, err := gs.s3client.GetObject(ctx, gs.bucket, gs.objName(key), minio.GetObjectOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -146,31 +146,31 @@ func (gs *S3Storage) Load(key string) ([]byte, error) {
 	return buf, nil
 }
 
-func (gs *S3Storage) Delete(key string) error {
-	return gs.s3client.RemoveObject(context.Background(), gs.bucket, gs.objName(key), minio.RemoveObjectOptions{})
+func (gs *S3Storage) Delete(ctx context.Context, key string) error {
+	return gs.s3client.RemoveObject(ctx, gs.bucket, gs.objName(key), minio.RemoveObjectOptions{})
 }
 
-func (gs *S3Storage) Exists(key string) bool {
-	_, err := gs.s3client.StatObject(context.Background(), gs.bucket, gs.objName(key), minio.StatObjectOptions{})
+func (gs *S3Storage) Exists(ctx context.Context, key string) bool {
+	_, err := gs.s3client.StatObject(ctx, gs.bucket, gs.objName(key), minio.StatObjectOptions{})
 	return err == nil
 }
 
-func (gs *S3Storage) List(prefix string, recursive bool) ([]string, error) {
+func (gs *S3Storage) List(ctx context.Context, prefix string, recursive bool) ([]string, error) {
 	var keys []string
-	for obj := range gs.s3client.ListObjects(context.Background(), gs.bucket, minio.ListObjectsOptions{
-		Prefix:    gs.objName(""),
-		Recursive: true,
+	for obj := range gs.s3client.ListObjects(ctx, gs.bucket, minio.ListObjectsOptions{
+		Prefix:    prefix,
+		Recursive: recursive,
 	}) {
 		keys = append(keys, obj.Key)
 	}
 	return keys, nil
 }
 
-func (gs *S3Storage) Stat(key string) (certmagic.KeyInfo, error) {
+func (gs *S3Storage) Stat(ctx context.Context, key string) (certmagic.KeyInfo, error) {
 	var ki certmagic.KeyInfo
-	oi, err := gs.s3client.StatObject(context.Background(), gs.bucket, gs.objName(key), minio.StatObjectOptions{})
+	oi, err := gs.s3client.StatObject(ctx, gs.bucket, gs.objName(key), minio.StatObjectOptions{})
 	if err != nil {
-		return ki, certmagic.ErrNotExist(err)
+		return ki, err
 	}
 	ki.Key = key
 	ki.Size = oi.Size
