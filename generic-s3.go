@@ -145,10 +145,14 @@ func (gs *S3Storage) Load(ctx context.Context, key string) ([]byte, error) {
 	}
 	defer r.Close()
 	buf, err := ioutil.ReadAll(gs.iowrap.WrapReader(r))
-	log.Printf("Better S3: Inside of Load, Buffer %s", string(buf))
+	log.Printf("Better S3: Inside of Load, Buffer %s\n", string(buf))
 	if err != nil {
 		log.Println(err.Error())
 		return nil, err
+	}
+	if len(buf) == 0 {
+		log.Printf("Buffer is len 0\n")
+		return nil, errors.New("certificate does not exist")
 	}
 	return buf, nil
 }
