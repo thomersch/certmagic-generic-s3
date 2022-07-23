@@ -140,6 +140,7 @@ func (gs *S3Storage) Load(ctx context.Context, key string) ([]byte, error) {
 	log.Printf("Better S3: Loading for %s\n", key)
 	r, err := gs.s3client.GetObject(ctx, gs.bucket, gs.objName(key), minio.GetObjectOptions{})
 	if err != nil {
+		log.Println(err.Error())
 		return nil, err
 	}
 	defer r.Close()
