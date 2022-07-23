@@ -154,8 +154,6 @@ func (gs *S3Storage) Delete(ctx context.Context, key string) error {
 
 func (gs *S3Storage) Exists(ctx context.Context, key string) bool {
 	_, err := gs.s3client.StatObject(ctx, gs.bucket, gs.objName(key), minio.StatObjectOptions{})
-	log.Println(err.Error())
-	log.Println(err==nil)
 	return err == nil
 }
 
