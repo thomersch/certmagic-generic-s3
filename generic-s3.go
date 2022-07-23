@@ -150,6 +150,7 @@ func (gs *S3Storage) Load(ctx context.Context, key string) ([]byte, error) {
 		log.Println(err.Error())
 		return nil, err
 	}
+	log.Println(len(buf))
 	if len(buf) == 0 {
 		log.Printf("Buffer is len 0\n")
 		return nil, errors.New("certificate does not exist")
