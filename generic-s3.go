@@ -81,7 +81,6 @@ var (
 )
 
 func (gs *S3Storage) Lock(ctx context.Context, key string) error {
-	log.Printf("Better S3: Locking for %s\n", key)
 	var startedAt = time.Now()
 
 	for {
@@ -120,12 +119,10 @@ func (gs *S3Storage) putLockFile(key string) error {
 }
 
 func (gs *S3Storage) Unlock(ctx context.Context, key string) error {
-	log.Printf("Better S3: Unlocking for %s\n", key)
 	return gs.s3client.RemoveObject(ctx, gs.bucket, gs.objLockName(key), minio.RemoveObjectOptions{})
 }
 
 func (gs *S3Storage) Store(ctx context.Context, key string, value []byte) error {
-	log.Printf("Better S3: Storing for %s\n", key)
 	r := gs.iowrap.ByteReader(value)
 	_, err := gs.s3client.PutObject(ctx,
 		gs.bucket,
@@ -138,34 +135,24 @@ func (gs *S3Storage) Store(ctx context.Context, key string, value []byte) error 
 }
 
 func (gs *S3Storage) Load(ctx context.Context, key string) ([]byte, error) {
-	log.Printf("Better S3: Loading for %s\n", key)
 	r, err := gs.s3client.GetObject(ctx, gs.bucket, gs.objName(key), minio.GetObjectOptions{})
 	if err != nil {
-		log.Println(err.Error())
-		return nil, err
+		return nil, fs.ErrNotExist
 	}
 	defer r.Close()
 	buf, err := ioutil.ReadAll(gs.iowrap.WrapReader(r))
-	log.Printf("Better S3: Inside of Load, Buffer %s\n", string(buf))
 	if err != nil {
-		log.Printf("Inside of load: %s", err.Error())
 		return nil, fs.ErrNotExist
 	}
-	log.Println(len(buf))
-	if len(buf) == 0 {
-		log.Printf("Buffer is len 0\n")
-		return nil, errors.New("certificate does not exist")
-	}
+
 	return buf, nil
 }
 
 func (gs *S3Storage) Delete(ctx context.Context, key string) error {
-	log.Printf("Better S3: Deleting for %s\n", key)
 	return gs.s3client.RemoveObject(ctx, gs.bucket, gs.objName(key), minio.RemoveObjectOptions{})
 }
 
 func (gs *S3Storage) Exists(ctx context.Context, key string) bool {
-	log.Printf("Better S3: Exists for %s\n", key)
 	_, err := gs.s3client.StatObject(ctx, gs.bucket, gs.objName(key), minio.StatObjectOptions{})
 	log.Println(err.Error())
 	log.Println(err==nil)
@@ -173,7 +160,6 @@ func (gs *S3Storage) Exists(ctx context.Context, key string) bool {
 }
 
 func (gs *S3Storage) List(ctx context.Context, prefix string, recursive bool) ([]string, error) {
-	log.Printf("Better S3: Deleting for %s\n", prefix)
 	var keys []string
 	for obj := range gs.s3client.ListObjects(ctx, gs.bucket, minio.ListObjectsOptions{
 		Prefix:    prefix,
@@ -185,7 +171,6 @@ func (gs *S3Storage) List(ctx context.Context, prefix string, recursive bool) ([
 }
 
 func (gs *S3Storage) Stat(ctx context.Context, key string) (certmagic.KeyInfo, error) {
-	log.Printf("Better S3: Stat for %s\n", key)
 	var ki certmagic.KeyInfo
 	oi, err := gs.s3client.StatObject(ctx, gs.bucket, gs.objName(key), minio.StatObjectOptions{})
 	if err != nil {
