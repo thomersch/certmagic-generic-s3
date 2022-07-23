@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/caddyserver/certmagic v0.16.1
 	github.com/minio/minio-go/v7 v7.0.31
-	golang.org/x/crypto v0.0.0-20220210151621-f4118a5b28e2
+	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa
 )
 
 require (
@@ -24,7 +24,6 @@ require (
 	github.com/minio/sha256-simd v0.1.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rs/xid v1.2.1 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/smartystreets/assertions v1.13.0 // indirect
