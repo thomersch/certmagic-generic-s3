@@ -1,12 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/caddyserver/certmagic"
-	"github.com/thomersch/certmagic-generic-s3"
+	cmgs3 "github.com/thomersch/certmagic-generic-s3"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 	var err error
 	certmagic.DefaultACME.Email = "yourname@example.com"
 	certmagic.DefaultACME.CA = certmagic.LetsEncryptStagingCA
-	certmagic.Default.Storage, err = cmgs3.NewS3Storage(cmgs3.S3Opts{
+	certmagic.Default.Storage, err = cmgs3.NewS3Storage(context.Background(), cmgs3.S3Opts{
 		Endpoint:        "very-cool.s3.backblazeb2.com",
 		Bucket:          "your-crypto-bucket",
 		AccessKeyID:     "some-key",
