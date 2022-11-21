@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/caddyserver/certmagic"
-	"github.com/thomersch/certmagic-generic-s3"
+	"github.com/edwardwc/better-s3"
 )
 
 func main() {
