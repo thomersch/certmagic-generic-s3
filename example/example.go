@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/caddyserver/certmagic"
-	cmgs3 "github.com/thomersch/certmagic-generic-s3"
+	cmgs3 "github.com/thomersch/certmagic-generic-s3/v2"
 )
 
 func main() {
