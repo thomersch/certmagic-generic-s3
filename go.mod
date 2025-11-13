@@ -1,4 +1,4 @@
-module github.com/thomersch/certmagic-generic-s3
+module github.com/thomersch/certmagic-generic-s3/v2
 
 go 1.14
 
